@@ -10,6 +10,7 @@ package fudbalskiklubovi.a9;
  * @author Korisnik
  */
 public class FudbalskiKluboviA9 {
+    public static final String URLBAZE = "jdbc:ucanaccess://src\\resursi\\Fudbalski klubovi.accdb";
 
     /**
      * @param args the command line arguments

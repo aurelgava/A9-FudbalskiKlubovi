@@ -4,7 +4,10 @@
  * and open the template in the editor.
  */
 package fudbalskiklubovi.a9;
-
+import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.DefaultComboBoxModel;
 /**
  *
  * @author Korisnik
@@ -16,6 +19,7 @@ public class GlavniProzor extends javax.swing.JFrame {
      */
     public GlavniProzor() {
         initComponents();
+        populate();
     }
 
     /**
@@ -57,11 +61,17 @@ public class GlavniProzor extends javax.swing.JFrame {
 
         jButton2.setText("Izadji");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox1ActionPerformed(evt);
+            }
+        });
 
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        jComboBox3.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox2ActionPerformed(evt);
+            }
+        });
 
         jLabel4.setText("Podaci u klubu");
 
@@ -72,16 +82,6 @@ public class GlavniProzor extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(24, 24, 24)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel6))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
@@ -89,7 +89,16 @@ public class GlavniProzor extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2)
-                            .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel4))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 73, Short.MAX_VALUE)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 55, Short.MAX_VALUE)
+                            .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addGap(84, 84, 84)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3)
@@ -119,7 +128,7 @@ public class GlavniProzor extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 113, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(jLabel6))
+                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -176,6 +185,50 @@ public class GlavniProzor extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+        int drzavaID = ((DrzavaDO) jComboBox1.getSelectedItem()).ID;
+        try {
+            Connection c = DriverManager.getConnection(FudbalskiKluboviA9.URLBAZE);
+            PreparedStatement ps = c.prepareStatement("SELECT * FROM Grad WHERE DrzavaID=?");
+            ps.setInt(1, drzavaID);
+            ResultSet rs = ps.executeQuery();
+            DefaultComboBoxModel<GradDO> dcbm = new DefaultComboBoxModel<>();
+            while(rs.next()){
+                GradDO grad = new GradDO();
+                grad.naziv = rs.getString("Grad");
+                grad.ID = rs.getInt("GradID");
+                dcbm.addElement(grad);
+            }
+            jComboBox2.setModel(dcbm);
+        } catch (SQLException ex) {
+            Logger.getLogger(GlavniProzor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }//GEN-LAST:event_jComboBox1ActionPerformed
+
+    private void jComboBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox2ActionPerformed
+        int gradID = ((GradDO) jComboBox2.getSelectedItem()).ID;
+        try {
+            Connection c = DriverManager.getConnection(FudbalskiKluboviA9.URLBAZE);
+            PreparedStatement ps = c.prepareStatement("SELECT Klub.NazivKluba AS Naziv, Klub.KlubID AS KlubID FROM (Klub"
+                    + " INNER JOIN Stadion ON Stadion.StadionID = Klub.StadionID) "
+                    + " INNER JOIN Grad ON Grad.GradID = Stadion.GradID"
+                    + " WHERE Grad.GradID=?");
+            ps.setInt(1, gradID);
+            ResultSet rs = ps.executeQuery();
+            DefaultComboBoxModel<KlubDO> dcbm = new DefaultComboBoxModel<>();
+            while(rs.next()){
+                KlubDO klub = new KlubDO();
+                klub.naziv = rs.getString("Naziv");
+                klub.ID = rs.getInt("KlubID");
+                dcbm.addElement(klub);
+            }
+            jComboBox3.setModel(dcbm);
+        } catch (SQLException ex) {
+            Logger.getLogger(GlavniProzor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jComboBox2ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -214,9 +267,9 @@ public class GlavniProzor extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
-    private javax.swing.JComboBox<String> jComboBox1;
-    private javax.swing.JComboBox<String> jComboBox2;
-    private javax.swing.JComboBox<String> jComboBox3;
+    private javax.swing.JComboBox<DrzavaDO> jComboBox1;
+    private javax.swing.JComboBox<GradDO> jComboBox2;
+    private javax.swing.JComboBox<KlubDO> jComboBox3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -230,4 +283,22 @@ public class GlavniProzor extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JTabbedPane jTabbedPane1;
     // End of variables declaration//GEN-END:variables
+
+    private void populate() {
+        try {
+            Connection c = DriverManager.getConnection(FudbalskiKluboviA9.URLBAZE);
+            Statement s = c.createStatement();
+            ResultSet rs = s.executeQuery("SELECT * FROM Drzava");
+            DefaultComboBoxModel dcbm = new DefaultComboBoxModel();
+            while(rs.next()){
+                DrzavaDO drzava = new DrzavaDO();
+                drzava.naziv = rs.getString("Naziv");
+                drzava.ID = rs.getInt("DrzavaID");
+                dcbm.addElement(drzava);
+            }
+            jComboBox1.setModel(dcbm);
+        } catch (SQLException ex) {
+            Logger.getLogger(GlavniProzor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }
