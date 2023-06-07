@@ -5,6 +5,8 @@
  */
 package fudbalskiklubovi.a9;
 
+import java.net.URL;
+
 /**
  *
  * @author Korisnik
@@ -12,6 +14,9 @@ package fudbalskiklubovi.a9;
 class KlubDO {
 
     String naziv;
+    StadionDO stadion;
+    URL sajt;
+    String amblem;
     int ID;
 
     @Override
