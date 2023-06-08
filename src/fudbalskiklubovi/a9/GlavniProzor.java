@@ -448,8 +448,7 @@ public class GlavniProzor extends javax.swing.JFrame {
                 red[4] = rs.getString("GostiNaziv");
                 dtm.addRow(red);
             }
-            jTable1.setModel(dtm);
-            
+            jTable1.setModel(dtm);            
         } catch (SQLException ex) {
             Logger.getLogger(GlavniProzor.class.getName()).log(Level.SEVERE, null, ex);
         }
